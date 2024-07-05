@@ -1,4 +1,4 @@
-import sys, os, time, math
+import sys, os, time, math, re
 
 def checkCardDirs():
     if not os.path.exists("../../.cardInfo"):
@@ -6,11 +6,11 @@ def checkCardDirs():
             os.makedirs("../../.cardInfo")
             os.makedirs("../../.cardInfo/cardList")
             os.makedirs("../../.cardInfo/cardStore")
-            
+
         except OSError:
             print(f"{sys.argv[0]} : error: unable to create .cardInfo directory")
             sys.exit(1)
-    
+
     if not os.path.exists("../../.cardInfo/cardList"):
         try:
             os.makedirs("../../.cardInfo/cardList")
@@ -30,7 +30,7 @@ def checkDatabaseDate():
     current_time = time.time()
 
     last_modified = os.stat("../../.cardInfo/cardList/database").st_mtime
-    
+
     day = 86400
 
     if last_modified < current_time - day * 2:
@@ -48,13 +48,13 @@ def sortKey(item):
         return 1
     else:
         return 2
-    
+
 def cardDisplay(cardList, cardName):
     numCards = len(cardList)
 
     if numCards == 1:
         return cardList[0]["name"]
-    
+
     numPages = math.ceil(numCards / 25)
     print(f"The following cards match \"{cardName}\":")
     i = 1
@@ -62,7 +62,7 @@ def cardDisplay(cardList, cardName):
     loop_cards = True
     curPage = 1
     while loop_cards:
-    
+
         card = cardList[i - 1]
 
         if i <= numCards:

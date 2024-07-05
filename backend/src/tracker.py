@@ -1,4 +1,4 @@
-from cardGet import getCardList, cardNameFind
+from cardGet import getCardList, cardNameFind, getPriceInfo
 from helper import cardDisplay
 helpCommands = """
 /q      -       Exits the program
@@ -21,6 +21,8 @@ def menus_loop():
             print(f"No cards that include \"{cardName}\" exists")
 
         cardName = cardDisplay(cardList, cardName)
+
+        cardPriceInfo = getPriceInfo(cardName, cardList)
 
 if __name__ == "__main__":
     getCardList()

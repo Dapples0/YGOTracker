@@ -61,3 +61,5 @@ def cardNameFind(cardName):
 
     return cardList
 
+def getPriceInfo(cardName, cardList):
+    print(cardList)

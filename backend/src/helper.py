@@ -60,33 +60,38 @@ def cardDisplay(cardList, cardName):
     i = 1
 
     loop_cards = True
+    page_loop = True
     curPage = 1
     while loop_cards:
-
+        page_loop = True
         card = cardList[i - 1]
 
         if i <= numCards:
             print(f"{str(i) + '.':<4}{card['name']:<55}|{card['race']:^20}|{card['type']:^25}")
 
+
         if i % 25 == 0 or i == numCards:
             print(f"On page {curPage}/{numPages}")
-            while True:
-                command = input("Enter Command (? for help): ")
-                if command == ">" and curPage != numPages:
-                    curPage = curPage + 1
-                    break
-                elif command == "<" and curPage != 1:
-                    curPage = curPage - 1
-                    if i % 25 == 0:
-                        i = i - 50
-                    elif i == numCards:
-                        i = i - (i % 25 + 25)
-                    break
-                elif command == "q":
-                    loop_cards = False
-                    break
-                elif command.isnumeric and int(command) <= numCards and int(command) >= 1:
+            while page_loop:
+                command, curPage, loop_cards, page_loop, i = dynamicPage(numCards, curPage, numPages, i, 25)
+                if re.fullmatch(r'[1-9][0-9]*', command) and int(command) <= numCards and int(command) >= 1:
                     return cardList[int(command) - 1]["name"]
-
         i = i + 1
+
+def dynamicPage(numItems, curPage, numPages, index, numDisplay):
+    command = input("Enter Command (? for help): ")
+    if command == ">" and curPage != numPages:
+        curPage = curPage + 1
+        return command, curPage, True, False, index
+    elif command == "<" and curPage != 1:
+        curPage = curPage - 1
+        if index % numDisplay == 0:
+            index = index - (numDisplay * 2)
+        elif index == numItems:
+            index = index - (index % numDisplay + numDisplay)
+        return command, curPage, True, False, index
+    elif command == "q":
+        return command, curPage, False, False, index
+
+    return command, curPage, True, True, index
 

@@ -4,8 +4,7 @@ from helper import checkDatabaseDate, checkCardDirs, sortKey
 
 url = "https://db.ygoprodeck.com/api/v7/cardinfo.php"
 
-databasePath = "../../.cardInfo/cardList/database"
-
+databasePath = "../../.cardList/database"
 
 
 
@@ -14,7 +13,9 @@ def getCardList():
     checkCardDirs()
 
     if not os.path.isfile(databasePath) or checkDatabaseDate():
-        res = requests.get(url)
+        res = requests.get(url, params={
+            "tcgplayer_data" : True
+        })
 
         if res.status_code == 200:
             data = res.json()
@@ -61,5 +62,25 @@ def cardNameFind(cardName):
 
     return cardList
 
-def getPriceInfo(cardName, cardList):
-    print(cardList)
+def getPriceInfo(cardName):
+    with open(databasePath, "r") as f:
+        data = json.load(f)
+        cardInfo = [
+            {
+                "name" : card["name"],
+                "type" : card["type"],
+                "desc": card["desc"],
+                "atk": card.get("atk", "N/A"),
+                "def": card.get("def", "N/A"),
+                "level": card.get("level", "N/A"),
+                "race": card["race"],
+                "attribute": card.get("attribute", "N/A"),
+                "card_sets": card.get("card_sets", "N/A"),
+                "card_prices": card["card_prices"],
+            }
+            for card in data if re.fullmatch(cardName, card["name"], re.I)
+        ]
+
+
+
+    return cardInfo[0]

@@ -1,40 +1,24 @@
 import sys, os, time, math, re
 
 def checkCardDirs():
-    if not os.path.exists("../../.cardInfo"):
+    os.chdir(os.path.dirname(__file__))
+    if not os.path.exists("../../.cardList"):
         try:
-            os.makedirs("../../.cardInfo")
-            os.makedirs("../../.cardInfo/cardList")
-            os.makedirs("../../.cardInfo/cardStore")
+            os.makedirs("../../.cardList")
 
         except OSError:
-            print(f"{sys.argv[0]} : error: unable to create .cardInfo directory")
+            print(f"{sys.argv[0]} : error: unable to create .cardList directory")
             sys.exit(1)
 
-    if not os.path.exists("../../.cardInfo/cardList"):
-        try:
-            os.makedirs("../../.cardInfo/cardList")
-        except OSError:
-            print(f"{sys.argv[0]} : error: unable to create cardList directory")
-            sys.exit(1)
-
-    if not os.path.exists("../../.cardInfo/cardStore"):
-        try:
-            os.makedirs("../../.cardInfo/cardStore")
-        except OSError:
-            print(f"{sys.argv[0]} : error: unable to create cardStore directory")
-            sys.exit(1)
 
 def checkDatabaseDate():
-
     current_time = time.time()
 
-    last_modified = os.stat("../../.cardInfo/cardList/database").st_mtime
+    last_modified = os.stat("../../.cardList").st_mtime
 
     day = 86400
-
     if last_modified < current_time - day * 2:
-        os.remove("../../.cardInfo/cardList/database")
+        os.remove("../../.cardList/database")
         return True
 
 
@@ -76,6 +60,8 @@ def cardDisplay(cardList, cardName):
                 command, curPage, loop_cards, page_loop, i = dynamicPage(numCards, curPage, numPages, i, 25)
                 if re.fullmatch(r'[1-9][0-9]*', command) and int(command) <= numCards and int(command) >= 1:
                     return cardList[int(command) - 1]["name"]
+                elif command == "q":
+                    return ""
         i = i + 1
 
 def dynamicPage(numItems, curPage, numPages, index, numDisplay):
@@ -95,3 +81,27 @@ def dynamicPage(numItems, curPage, numPages, index, numDisplay):
 
     return command, curPage, True, True, index
 
+def displayPrice(cardInfo):
+    numSets = len(cardInfo["card_sets"])
+    print(f"{cardInfo['name']} | {cardInfo['attribute']} {cardInfo['race']} {cardInfo['type']} | Lvl {cardInfo['level']} | ATK/{cardInfo['atk']} DEF/{cardInfo['def']}")
+
+    numPages = math.ceil(numSets / 7)
+
+    i = 1
+
+    loop_sets = True
+    page_loop = True
+    curPage = 1
+    while loop_sets:
+        page_loop = True
+        set = cardInfo["card_sets"][i -1]
+        if i <= numSets:
+            print(f"\t{set['set_name']}:\n\t\tSet Code: {set['set_code']}\n\t\tRarity: {set['set_rarity']}\n\t\tEdition: {set['set_edition']}\n\t\tPrice: {set['set_price']}\n")
+        if i % 7 == 0 or i == numSets:
+            print(f"On page {curPage}/{numPages}")
+            while page_loop:
+                command, curPage, loop_cards, page_loop, i = dynamicPage(numSets, curPage, numPages, i, 7)
+                if command == "q":
+                    return
+
+        i = i + 1

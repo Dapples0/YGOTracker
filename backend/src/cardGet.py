@@ -10,7 +10,7 @@ databasePath = "../../.cardList/database"
 
 
 def getCardList():
-    checkCardDirs()
+    checkCardDirs(".cardList")
 
     if not os.path.isfile(databasePath) or checkDatabaseDate():
         res = requests.get(url, params={
@@ -49,6 +49,7 @@ def cardNameFind(cardName):
         data = json.load(f)
         cardList = [
             {
+                "id"   : card["id"],
                 "name" : card["name"],
                 "type" : card["type"],
                 "race" : card["race"],
@@ -62,11 +63,13 @@ def cardNameFind(cardName):
 
     return cardList
 
+
 def getPriceInfo(cardName):
     with open(databasePath, "r") as f:
         data = json.load(f)
         cardInfo = [
             {
+                "id"   : card["id"],
                 "name" : card["name"],
                 "type" : card["type"],
                 "desc": card["desc"],

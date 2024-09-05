@@ -1,4 +1,4 @@
-import sys, os, time, math, re
+import sys, os, time, math, re, enum
 
 helpCommands = """
 /q      -       Exits the program
@@ -7,15 +7,17 @@ helpCommands = """
 <       -       Return to previous page
 """
 
+priceItemNum = 7
+cardItemNum = 25
 
-def checkCardDirs():
+def checkCardDirs(dirName):
     os.chdir(os.path.dirname(__file__))
-    if not os.path.exists("../../.cardList"):
+    if not os.path.exists(f"../../{dirName}"):
         try:
-            os.makedirs("../../.cardList")
+            os.makedirs(f"../../{dirName}")
 
         except OSError:
-            print(f"{sys.argv[0]} : error: unable to create .cardList directory")
+            print(f"{sys.argv[0]} : error: unable to create {dirName} directory")
             sys.exit(1)
 
 
@@ -47,7 +49,7 @@ def cardDisplay(cardList, cardName):
     if numCards == 1:
         return cardList[0]["name"]
 
-    numPages = math.ceil(numCards / 25)
+    numPages = math.ceil(numCards / cardItemNum)
     print(f"The following cards match \"{cardName}\":")
     i = 1
 
@@ -62,15 +64,48 @@ def cardDisplay(cardList, cardName):
             print(f"{str(i) + '.':<4}{card['name']:<55}|{card['race']:^20}|{card['type']:^25}")
 
 
-        if i % 25 == 0 or i == numCards:
+        if i % cardItemNum == 0 or i == numCards:
             print(f"On page {curPage}/{numPages}")
             while page_loop:
-                command, curPage, loop_cards, page_loop, i = dynamicPage(numCards, curPage, numPages, i, 25)
+                command, curPage, loop_cards, page_loop, i = dynamicPage(numCards, curPage, numPages, i, cardItemNum)
                 if re.fullmatch(r'[1-9][0-9]*', command) and int(command) <= numCards and int(command) >= 1:
                     return cardList[int(command) - 1]["name"]
                 elif command == "/q":
                     return ""
         i = i + 1
+
+def getDeckList(ydkName):
+    os.chdir(os.path.dirname(__file__))
+    try:
+        deckList = {
+            "main" : {},
+            "extra" : {},
+            "side" : {},
+        }
+        deckSpot = "main"
+        with open(f"../../ydk/{ydkName}.ydk", "r") as f:
+            for line in f:
+                line = line.strip().rstrip('\n')
+                if line == "#main":
+                    deckSpot = "main"
+                    continue
+                elif line == "#extra":
+                    deckSpot = "extra"
+                    continue
+                elif line == "!side":
+                    deckSpot = "side"
+                    continue
+                if line in deckList[deckSpot]:
+                    deckList[deckSpot][line] += 1
+                else:
+                    deckList[deckSpot][line] = 1
+
+        return deckList
+    except OSError:
+        print("tracker-error: input file must be a .ydk file in the ydk folder", file=sys.stderr)
+        sys.exit(1)
+
+
 
 def dynamicPage(numItems, curPage, numPages, index, numDisplay):
     command = input("Enter Command/Card Number (/? for help): ")
@@ -87,7 +122,7 @@ def dynamicPage(numItems, curPage, numPages, index, numDisplay):
     elif command == "/q":
         return command, curPage, False, False, index
     elif command == "/?":
-        # print(helpCommands)
+        print(helpCommands)
         return command, curPage, True, False, index
 
 
@@ -97,7 +132,7 @@ def displayPrice(cardInfo):
     numSets = len(cardInfo["card_sets"])
     print(f"{cardInfo['name']} | {cardInfo['attribute']} {cardInfo['race']} {cardInfo['type']} | Lvl {cardInfo['level']} | ATK/{cardInfo['atk']} DEF/{cardInfo['def']}")
 
-    numPages = math.ceil(numSets / 7)
+    numPages = math.ceil(numSets / priceItemNum)
 
     i = 1
 
@@ -106,13 +141,13 @@ def displayPrice(cardInfo):
     curPage = 1
     while loop_sets:
         page_loop = True
-        set = cardInfo["card_sets"][i -1]
+        set = cardInfo["card_sets"][i - 1]
         if i <= numSets:
             print(f"\t{set['set_name']}:\n\t\tSet Code: {set['set_code']}\n\t\tRarity: {set['set_rarity']}\n\t\tEdition: {set['set_edition']}\n\t\tPrice: {set['set_price']}\n")
-        if i % 7 == 0 or i == numSets:
+        if i % priceItemNum == 0 or i == numSets:
             print(f"On page {curPage}/{numPages}")
             while page_loop:
-                command, curPage, loop_sets, page_loop, i = dynamicPage(numSets, curPage, numPages, i, 7)
+                command, curPage, loop_sets, page_loop, i = dynamicPage(numSets, curPage, numPages, i, priceItemNum)
                 if command == "/q":
                     break
 

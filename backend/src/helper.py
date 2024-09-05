@@ -1,5 +1,13 @@
 import sys, os, time, math, re
 
+helpCommands = """
+/q      -       Exits the program
+/?      -       Prints list of commands
+>       -       Go to next page
+<       -       Return to previous page
+"""
+
+
 def checkCardDirs():
     os.chdir(os.path.dirname(__file__))
     if not os.path.exists("../../.cardList"):
@@ -60,12 +68,12 @@ def cardDisplay(cardList, cardName):
                 command, curPage, loop_cards, page_loop, i = dynamicPage(numCards, curPage, numPages, i, 25)
                 if re.fullmatch(r'[1-9][0-9]*', command) and int(command) <= numCards and int(command) >= 1:
                     return cardList[int(command) - 1]["name"]
-                elif command == "q":
+                elif command == "/q":
                     return ""
         i = i + 1
 
 def dynamicPage(numItems, curPage, numPages, index, numDisplay):
-    command = input("Enter Command (? for help): ")
+    command = input("Enter Command/Card Number (/? for help): ")
     if command == ">" and curPage != numPages:
         curPage = curPage + 1
         return command, curPage, True, False, index
@@ -76,8 +84,12 @@ def dynamicPage(numItems, curPage, numPages, index, numDisplay):
         elif index == numItems:
             index = index - (index % numDisplay + numDisplay)
         return command, curPage, True, False, index
-    elif command == "q":
+    elif command == "/q":
         return command, curPage, False, False, index
+    elif command == "/?":
+        # print(helpCommands)
+        return command, curPage, True, False, index
+
 
     return command, curPage, True, True, index
 
@@ -100,8 +112,8 @@ def displayPrice(cardInfo):
         if i % 7 == 0 or i == numSets:
             print(f"On page {curPage}/{numPages}")
             while page_loop:
-                command, curPage, loop_cards, page_loop, i = dynamicPage(numSets, curPage, numPages, i, 7)
-                if command == "q":
-                    return
+                command, curPage, loop_sets, page_loop, i = dynamicPage(numSets, curPage, numPages, i, 7)
+                if command == "/q":
+                    break
 
         i = i + 1

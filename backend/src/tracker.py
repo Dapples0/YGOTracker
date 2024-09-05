@@ -1,9 +1,15 @@
 from cardGet import getCardList, cardNameFind, getPriceInfo
-from helper import cardDisplay, displayPrice
-helpCommands = """
-/q      -       Exits the program
-/?      -       Prints list of commands
-"""
+from helper import cardDisplay, displayPrice, helpCommands
+import argparse
+
+parser = argparse.ArgumentParser(description='Tracks prices of Yu-Gi-Oh! cards and costs of decks.')
+parser.add_argument('ydk_file', type=str, nargs='?',
+                    help='a file with a ydk extension')
+parser.add_argument('--f', dest='accumulate', action='store_const',
+                    const=sum, default=max,
+                    help='selects deck pricing option')
+
+args = parser.parse_args()
 
 def menus_loop():
     cardName = ""

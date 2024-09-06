@@ -10,7 +10,7 @@ databasePath = "../../.cardList/database"
 
 
 def getCardList():
-    checkCardDirs()
+    checkCardDirs(".cardList")
 
     if not os.path.isfile(databasePath) or checkDatabaseDate():
         res = requests.get(url, params={
@@ -49,6 +49,7 @@ def cardNameFind(cardName):
         data = json.load(f)
         cardList = [
             {
+                "id"   : card["id"],
                 "name" : card["name"],
                 "type" : card["type"],
                 "race" : card["race"],
@@ -62,11 +63,51 @@ def cardNameFind(cardName):
 
     return cardList
 
+def getIdPriceInfo(cardId):
+    with open(databasePath, "r") as f:
+        data = json.load(f)
+        cardInfo = [
+            {
+                "id"   : card["id"],
+                "name" : card["name"],
+                "type" : card["type"],
+                "desc": card["desc"],
+                "atk": card.get("atk", "N/A"),
+                "def": card.get("def", "N/A"),
+                "level": card.get("level", "N/A"),
+                "race": card["race"],
+                "attribute": card.get("attribute", "N/A"),
+                "card_sets": card.get("card_sets", "N/A"),
+                "card_prices": card["card_prices"],
+            }
+            for card in data if cardId == card["id"]
+        ]
+
+    if not cardInfo:
+        return [
+            {
+                "id"   : int(cardId),
+                "name" : "N/A",
+                "type" : "N/A",
+                "desc": "N/A",
+                "atk": "N/A",
+                "def": "N/A",
+                "level": "N/A",
+                "race": "N/A",
+                "attribute": "N/A",
+                "card_sets": [],
+                "card_prices": [],
+            }
+        ][0]
+    return cardInfo[0]
+
+
 def getPriceInfo(cardName):
     with open(databasePath, "r") as f:
         data = json.load(f)
         cardInfo = [
             {
+                "id"   : card["id"],
                 "name" : card["name"],
                 "type" : card["type"],
                 "desc": card["desc"],
@@ -81,6 +122,20 @@ def getPriceInfo(cardName):
             for card in data if re.fullmatch(cardName, card["name"], re.I)
         ]
 
-
-
     return cardInfo[0]
+
+def getDeckListPrice(deckListIds):
+    deckList = {
+        "Main" : [],
+        "Extra" : [],
+        "Side" : [],
+    }
+
+    for deckSpot in deckListIds:
+        for cardId in deckListIds[deckSpot]:
+            amount = deckListIds[deckSpot][cardId]
+            cardInfo = getIdPriceInfo(int(cardId))
+            deckList[deckSpot].append((cardInfo, amount))
+
+
+    return deckList

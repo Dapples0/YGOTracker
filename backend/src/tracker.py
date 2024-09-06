@@ -1,5 +1,5 @@
-from cardGet import getCardList, cardNameFind, getPriceInfo
-from helper import cardDisplay, checkCardDirs, displayPrice, getDeckList, helpCommands
+from cardGet import getCardList, cardNameFind, getDeckListPrice, getPriceInfo
+from helper import cardDisplay, checkCardDirs, displayDeckPrice, displayPrice, getDeckList, helpCommands
 import argparse, re, sys
 
 parser = argparse.ArgumentParser(prog="tracker", description='Tracks prices of Yu-Gi-Oh! cards and costs of decks.')
@@ -41,7 +41,11 @@ def menus_decklist():
 
     checkCardDirs("ydk")
 
-    deckList = getDeckList(ydkName)
+    print("Calculating Deck Price...")
+
+    deckList = getDeckListPrice(getDeckList(ydkName))
+
+    displayDeckPrice(deckList)
 
 if __name__ == "__main__":
     getCardList()

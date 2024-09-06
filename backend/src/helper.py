@@ -78,22 +78,22 @@ def getDeckList(ydkName):
     os.chdir(os.path.dirname(__file__))
     try:
         deckList = {
-            "main" : {},
-            "extra" : {},
-            "side" : {},
+            "Main" : {},
+            "Extra" : {},
+            "Side" : {},
         }
         deckSpot = "main"
         with open(f"../../ydk/{ydkName}.ydk", "r") as f:
             for line in f:
                 line = line.strip().rstrip('\n')
                 if line == "#main":
-                    deckSpot = "main"
+                    deckSpot = "Main"
                     continue
                 elif line == "#extra":
-                    deckSpot = "extra"
+                    deckSpot = "Extra"
                     continue
                 elif line == "!side":
-                    deckSpot = "side"
+                    deckSpot = "Side"
                     continue
                 if line in deckList[deckSpot]:
                     deckList[deckSpot][line] += 1
@@ -152,3 +152,24 @@ def displayPrice(cardInfo):
                     break
 
         i = i + 1
+
+def displayDeckPrice(deckList):
+    totalPrice = 0.00
+
+    for deckSpot in deckList:
+        print(deckSpot + ":")
+        deckSpotPrice = 0.00
+        for card in deckList[deckSpot]:
+            price = filterCardPrice(card[0]["card_prices"])
+            sumPrice = price * card[1]
+            print(f"\t{(card[0]['name'][:20] + '...') if len(card[0]['name']) > 20 else card[0]['name']:<25}({card[1]})\t|\tSingle Price: ${price:.2f}\t|\tSum Price: ${sumPrice:.2f}")
+            deckSpotPrice += sumPrice
+        print(f"{deckSpot} Deck Cost: ${deckSpotPrice:.2f}")
+        totalPrice += deckSpotPrice
+    print(f"Total Cost: ${totalPrice:.2f}")
+
+
+def filterCardPrice(prices):
+    if not prices:
+        return 0.00
+    return float(prices[0]["tcgplayer_price"])

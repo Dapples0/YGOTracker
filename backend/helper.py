@@ -12,9 +12,9 @@ cardItemNum = 25
 
 def checkCardDirs(dirName):
     os.chdir(os.path.dirname(__file__))
-    if not os.path.exists(f"../../{dirName}"):
+    if not os.path.exists(f"../{dirName}"):
         try:
-            os.makedirs(f"../../{dirName}")
+            os.makedirs(f"../{dirName}")
 
         except OSError:
             print(f"{sys.argv[0]} : error: unable to create {dirName} directory")
@@ -24,11 +24,11 @@ def checkCardDirs(dirName):
 def checkDatabaseDate():
     current_time = time.time()
 
-    last_modified = os.stat("../../.cardList").st_mtime
+    last_modified = os.stat("../.cardList").st_mtime
 
     day = 86400
     if last_modified < current_time - day * 2:
-        os.remove("../../.cardList/database")
+        os.remove("../.cardList/database")
         return True
 
 
@@ -83,7 +83,7 @@ def getDeckList(ydkName):
             "Side" : {},
         }
         deckSpot = "main"
-        with open(f"../../ydk/{ydkName}.ydk", "r") as f:
+        with open(f"../decks/{ydkName}.ydk", "r") as f:
             for line in f:
                 line = line.strip().rstrip('\n')
                 if line == "#main":
@@ -95,14 +95,18 @@ def getDeckList(ydkName):
                 elif line == "!side":
                     deckSpot = "Side"
                     continue
+                elif not re.match(r'^\d+$', line):
+                    continue
+
                 if line in deckList[deckSpot]:
                     deckList[deckSpot][line] += 1
                 else:
                     deckList[deckSpot][line] = 1
 
+
         return deckList
     except OSError:
-        print("tracker-error: input file must be a .ydk file in the ydk folder", file=sys.stderr)
+        print("tracker-error: input file must be a .ydk file in the decks folder", file=sys.stderr)
         sys.exit(1)
 
 

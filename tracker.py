@@ -33,6 +33,9 @@ def menus_loop():
         else:
             cardName = cardDisplay(cardList, cardName)
 
+            if len(cardName) == 0:
+                continue
+
             cardInfo = getPriceInfo(cardName)
 
             displayPrice(cardInfo)

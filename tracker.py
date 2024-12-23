@@ -29,7 +29,7 @@ def menus_loop():
         cardList = cardNameFind(cardName)
 
         if len(cardList) == 0 and cardName != "/q":
-            print(f"No cards that include \"{cardName}\" existsdc")
+            print(f"No cards that include \"{cardName}\" exists")
         else:
             cardName = cardDisplay(cardList, cardName)
 

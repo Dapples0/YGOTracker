@@ -30,4 +30,4 @@ python3 tracker.py -f "deck-name.ydk"
 1. Loosen dependency of front-end with back-end functions.
 
 # Issues and edges cases
-If any issues occur when using this program, open a new issue describing it and the steps to replicate it.
+If any issues occur when using this program, please open a new issue. In it describe the issue and the steps to replicate it.

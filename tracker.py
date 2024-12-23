@@ -1,6 +1,6 @@
-from cardGet import getCardList, cardNameFind, getDeckListPrice, getPriceInfo
-from helper import cardDisplay, checkCardDirs, displayDeckPrice, displayPrice, getDeckList, helpCommands
-import argparse, re, sys
+from backend.cardGet import getCardList, cardNameFind, getDeckListPrice, getPriceInfo
+from backend.helper import cardDisplay, checkCardDirs, displayDeckPrice, displayPrice, getDeckList, helpCommands
+import argparse, sys
 
 parser = argparse.ArgumentParser(prog="tracker", description='Tracks prices of Yu-Gi-Oh! cards and costs of decks.')
 group = parser.add_argument_group('group')
@@ -15,6 +15,7 @@ if (not args.file and args.ydk_file is not None) or (args.file and args.ydk_file
     parser.print_help()
     sys.exit(1)
 
+
 def menus_loop():
     cardName = ""
     while True:
@@ -28,7 +29,7 @@ def menus_loop():
         cardList = cardNameFind(cardName)
 
         if len(cardList) == 0 and cardName != "/q":
-            print(f"No cards that include \"{cardName}\" existsdc")
+            print(f"No cards that include \"{cardName}\" exists")
         else:
             cardName = cardDisplay(cardList, cardName)
 
@@ -39,7 +40,7 @@ def menus_loop():
 def menus_decklist():
     ydkName = args.ydk_file.strip().rstrip(".ydk")
 
-    checkCardDirs("ydk")
+    checkCardDirs("decks")
 
     print("Calculating Deck Price...")
 
@@ -48,6 +49,7 @@ def menus_decklist():
     displayDeckPrice(deckList)
 
 if __name__ == "__main__":
+    print("Loading database...")
     getCardList()
     if args.file:
         menus_decklist()

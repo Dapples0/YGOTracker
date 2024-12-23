@@ -1,10 +1,9 @@
 import sys, re, os, requests, json
-
-from helper import checkDatabaseDate, checkCardDirs, sortKey
+from backend.helper import checkDatabaseDate, checkCardDirs, sortKey
 
 url = "https://db.ygoprodeck.com/api/v7/cardinfo.php"
 
-databasePath = "../../.cardList/database"
+databasePath = "../.cardList/database"
 
 
 

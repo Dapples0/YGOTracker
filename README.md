@@ -4,7 +4,7 @@ CLI based Yu-Gi-Oh! singles and deck price tracker. Made using python and YGOPro
 # Installation and setting up
 Clone the repository into your device:
 ```sh
-git clone git@github.com:Dapples0/Xdle.git
+git clone https://github.com/Dapples0/YGOTracker.git
 ```
 
 # How to use

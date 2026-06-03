@@ -20,7 +20,7 @@ python3 tracker.py
 ```
 Afterwards, you will be prompted to type in a card name (not case sensitive). If multiple cards match, input the cards respective number into the terminal.
 
-## Getting the price a deck
+## Getting the price of a deck
 To get the total price of a deck, the deck's ydk file must be in the "decks" folder. Once done, run this line on your terminal, where "deck-name.ydk" should be your ydk file.
 ```sh
 python3 tracker.py -f "deck-name.ydk"
